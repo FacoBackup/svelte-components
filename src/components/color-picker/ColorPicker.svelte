@@ -2,7 +2,8 @@
     import {onMount, onDestroy} from 'svelte';
     import hsvToHsl from "./utils/hsv-to-hsl.js";
 
-    export let submit = () => null
+    export let handleChange = () => null
+    export let realtime = false
     export let size = 250
 
 
@@ -28,27 +29,28 @@
                     if (saturation > 100)
                         saturation = 100
                     if (saturation < 100 && saturation > 0)
-                        picker.style.left = x + "px"
+                        picker.style.left = event.clientX + "px"
 
                     value = percentageY * 100
                     if (value > 100)
                         value = 100
                     if (value < 100 && value > 0)
-                        picker.style.top = y + "px"
+                        picker.style.top = event.clientY + "px"
                     if (value <= 100 || saturation <= 100)
                         updatePicker()
+
+                    if (realtime)
+                        handleChange(hsvToHsl(hue, saturation, value))
                 }
                 break
             }
-            case "mouseenter":
-                boundingBox = canvas.getBoundingClientRect()
-                break
             case "mousedown":
+                boundingBox = canvas.getBoundingClientRect()
                 clicked = true
                 break
             case "mouseup":
                 clicked = false
-                submit(hsvToHsl(hue, saturation, value))
+                handleChange(hsvToHsl(hue, saturation, value))
                 break
         }
 
@@ -56,17 +58,20 @@
 
     onDestroy(() => {
         canvas.removeEventListener("mousemove", handler)
-        canvas.removeEventListener("mouseenter", handler)
         canvas.removeEventListener("mousedown", handler)
         document.body.removeEventListener("mouseup", handler)
     })
     onMount(() => {
         picker = document.querySelector(".picker")
-        console.log(picker)
-        updatePicker()
         canvas = document.querySelector(".canvas")
+
+        boundingBox = canvas.getBoundingClientRect()
+        picker.style.left = boundingBox.x + "px"
+        picker.style.top = boundingBox.y + "px"
+
+        updatePicker()
+
         canvas.addEventListener("mousemove", handler)
-        canvas.addEventListener("mouseenter", handler)
         canvas.addEventListener("mousedown", handler)
         document.body.addEventListener("mouseup", handler)
     })
@@ -79,8 +84,13 @@
         justify-items: center;
         align-content: center;
         gap: 16px;
-        background-color: #f4f5f5;
         padding: 16px;
+
+        background: var(--pj-background-secondary);
+        border-radius: 5px;
+        border: var(--pj-border-primary) 1px solid;
+
+
         --hue: 0;
         --box-shadow: 0 0 0 1px rgba(0, 0, 0, .025), 0 1px 5px rgba(0, 0, 0, 0.25);
     }
@@ -148,6 +158,8 @@
         border: #e0e0e0 2px solid;
         box-shadow: var(--box-shadow);
 
+        transform: translate(-50%, -50%);
+
     }
 
 </style>
@@ -158,13 +170,15 @@
         <div class="picker"></div>
     </div>
     <input
-            on:input={(event) => {
+        on:input={(event) => {
             hue= parseFloat(event.target.value)
             event.target.parentElement.style.setProperty('--hue', event.target.value);
             updatePicker()
+            if(realtime)
+                handleChange(hsvToHsl(hue, saturation, value))
         }}
-            type="range"
-            value={hue}
-            max="360"
+        type="range"
+        value={hue}
+        max="360"
     >
 </div>
