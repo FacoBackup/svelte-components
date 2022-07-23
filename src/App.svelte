@@ -2,6 +2,9 @@
     import ColorPicker from "./components/color-picker/ColorPicker.svelte";
     import Input from "./components/input/Input.svelte";
     import Icon from "./components/Icon/Icon.svelte";
+    import Accordion from "./components/accordion/Accordion.svelte";
+    import Dropdown from "./components/dropdown/Dropdown.svelte";
+
     let color = {h: 0, s: 0, l: 0}
     let realtime = false
 </script>
@@ -33,4 +36,56 @@
         <Icon>category</Icon>
         <Icon>close</Icon>
     </nav>
+</div>
+
+<div class="container">
+    <label>accordion</label>
+  <Accordion >
+      <svelte:fragment slot="header">
+          Olá
+      </svelte:fragment>
+      <strong>BBBBBBBBBBBB</strong>
+  </Accordion>
+</div>
+
+
+<div class="container" style="position:fixed; top: 0; left: 0">
+    <Dropdown >
+        <svelte:fragment slot="header">
+            TOP LEFT
+        </svelte:fragment>
+        <h2>
+            Olá  sou modal
+        </h2>
+    </Dropdown>
+</div>
+<div class="container" style="position:fixed; bottom: 0; left: 0">
+    <Dropdown >
+        <svelte:fragment slot="header">
+            BOTTOM LEFT
+        </svelte:fragment>
+        <h2>
+            Olá  sou modal
+        </h2>
+    </Dropdown>
+</div>
+<div class="container" style="position:fixed; top: 0; right: 0">
+    <Dropdown >
+        <svelte:fragment slot="header">
+            TOP RIGHT
+        </svelte:fragment>
+        <h2>
+            Olá  sou modal
+        </h2>
+    </Dropdown>
+</div>
+<div class="container" style="position:fixed; bottom: 0; right: 0">
+    <Dropdown >
+        <svelte:fragment slot="header">
+            RIGHT BOTTOM
+        </svelte:fragment>
+        <h2>
+            Olá  sou modal
+        </h2>
+    </Dropdown>
 </div>
